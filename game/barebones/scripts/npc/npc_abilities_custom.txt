@@ -1,0 +1,888 @@
+
+  // Dota Abilities Override File
+  "DOTAAbilities"
+  {
+    "Version"   "1"
+    
+"example_ability"
+{
+  // General
+  //-------------------------------------------------------------------------------------------------------------
+  "BaseClass"       "ability_datadriven"
+  "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+  "AbilityTextureName"  "mirana_leap"
+
+  // Precache
+  //-------------------------------------------------------------------------------------------------------------
+  "precache"
+  {
+    "soundfile"     "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
+  }
+  
+  // Casting
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityCastRange"        "0"
+  "AbilityCastPoint"        "0"
+
+  // Time   
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityCooldown"       "5"
+  "AbilityDuration"       "0"
+
+  // Cost
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityManaCost"       "0"
+  "MaxLevel"              "1"
+
+  // Special
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilitySpecial"
+  {
+    "01"
+    {
+      "var_type"        "FIELD_INTEGER"
+      "leap_distance"     "1000"
+    }
+    "02"
+    {
+      "var_type"        "FIELD_FLOAT"
+      "leap_speed"      "1600.0"
+    }
+    "03"
+    {
+      "var_type"        "FIELD_FLOAT"
+      "leap_acceleration"   "7000.0"
+    }
+    "04"
+    {
+      "var_type"      "FIELD_INTEGER"
+      "leap_radius"   "775"
+    }
+    "05"
+    {
+      "var_type"      "FIELD_INTEGER"
+      "leap_speedbonus" "4 8 12 16"
+    }
+    "06"
+    {
+      "var_type"      "FIELD_INTEGER"
+      "leap_speedbonus_as"  "8 16 24 32"
+    }
+    "07"
+    {
+      "var_type"        "FIELD_FLOAT"
+      "leap_duration"     "10.0"
+    }
+  }
+
+  "OnSpellStart"
+  {
+    "FireSound"
+    {
+      "EffectName"  "Ability.Leap"
+      "Target"    "CASTER"
+    }
+    
+    "RunScript"
+    {
+      "ScriptFile"  "scripts/vscripts/heroes/hero_mirana/leap.lua"
+      "Function"    "Leap"
+    }
+
+    "ActOnTargets"
+    {
+      "Target"
+            {
+                "Center" "CASTER"
+                "Radius" "%leap_radius"
+                "Teams" "DOTA_UNIT_TARGET_TEAM_FRIENDLY" 
+                "Types" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+            }
+
+            "Action"
+            {
+              "ApplyModifier"
+              {
+                "ModifierName"  "modifier_leap_datadriven"
+                "Target"    "TARGET"
+              }
+            }
+    }
+
+    "DelayedAction"
+    {
+      "Delay"   "%leap_distance / %leap_speed"
+
+      "Action"
+      {
+        "ActOnTargets"
+        {
+          "Target"
+                {
+                    "Center" "CASTER"
+                    "Radius" "%leap_radius"
+                    "Teams" "DOTA_UNIT_TARGET_TEAM_FRIENDLY" 
+                    "Types" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+                }
+
+                "Action"
+                {
+                  "ApplyModifier"
+                  {
+                    "ModifierName"  "modifier_leap_datadriven"
+                    "Target"    "TARGET"
+                  }
+                }
+        }
+      }
+    }
+  }
+}
+    
+  //=================================================================================================================
+    // Creature: Area Stun
+    //=================================================================================================================
+      "Version"   "2"
+
+    "creature_slithereen_crush"
+    {
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      "BaseClass"       "ability_datadriven"
+      "AbilityBehavior"   "DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+      "AbilityUnitDamageType" "DAMAGE_TYPE_PURE"  
+      "AbilityTextureName"    "slardar_slithereen_crush"
+      "MaxLevel"              "1"
+    
+      // Casting
+      //-------------------------------------------------------------------------------------------------------------
+      "AbilityCastRange"        "0"
+      "AbilityCastPoint"        "0.20"
+
+      // Time   
+      //-------------------------------------------------------------------------------------------------------------
+      "AbilityCooldown"       "8.0"
+      "AbilityDuration"       "2"
+
+      // Damage.
+      //-------------------------------------------------------------------------------------------------------------
+      "AbilityDamage"         "99"
+
+      // Cost
+      //-------------------------------------------------------------------------------------------------------------
+      "AbilityManaCost"       "0"
+
+      // Stats
+      //-------------------------------------------------------------------------------------------------------------
+      "AbilityModifierSupportValue" "0.5" // Applies multiple modifiers
+
+          "precache"
+      {
+        "particle"          "particles/units/heroes/hero_brewmaster/brewmaster_thunder_clap_demo.vpcf | particles/units/heroes/hero_brewmaster/brewmaster_thunder_clap_shock.vpcf"
+        "soundfile"         "soundevents/game_sounds_heroes/game_sounds_tusk.vsndevts"
+      }
+      //-------------------------------------------------------------------------------------------------------------
+      "OnSpellStart"
+      {
+        "FireSound"
+        {
+          "EffectName"    "Hero_Tusk.WalrusPunch.Target"
+          "Target"      "CASTER"
+        }
+        
+        "FireEffect"
+        {
+          "EffectName" "particles/units/heroes/hero_brewmaster/brewmaster_thunder_clap_demo.vpcf"
+          "EffectAttachType" "follow_origin"
+          "ControlPoints"
+          {
+            "00" "0 0 0"
+            "01" "%crush_radius %crush_radius %crush_radius"
+          }
+        }
+
+              "FireEffect"
+        {
+          "EffectName" "particles/units/heroes/hero_brewmaster/brewmaster_thunder_clap_shock.vpcf"
+          "EffectAttachType" "follow_origin"
+          "ControlPoints"
+          {
+            "00" "0 0 0"
+            "01" "%crush_radius %crush_radius %crush_radius"
+          }
+        }
+
+        "Damage"
+        {
+          "Type" "DAMAGE_TYPE_PHYSICAL"
+          "Damage" "99"
+          "Target"
+          {
+            "Center" "CASTER"
+            "Radius" "300"
+            "Teams" "DOTA_UNIT_TARGET_TEAM_BOTH"
+            "Types" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP | DOTA_UNIT_TARGET_MECHANICAL | DOTA_UNIT_TARGET_OTHER"
+          }
+        }
+
+              "Knockback"
+        {
+          "Target"
+          {
+            "Center"  "CASTER"
+            "Teams"   "DOTA_UNIT_TARGET_TEAM_BOTH"
+            "Radius"  "300"
+          }
+          "Center"  "CASTER"
+          "Duration"  "0.75"
+          "Distance"  "700 + 25"
+          "Height"  "50"
+            "Stun"
+            {
+              "Duration"   "3"
+              "Target"    "TARGET"
+            }
+        }
+        "ApplyModifier"
+        {
+          "ModifierName" "creature_slithereen_crush_stun"
+          "Target"
+          {
+            "Center" "CASTER"
+            "Radius" "300"
+            "Teams" "DOTA_UNIT_TARGET_TEAM_ENEMY"
+            "Types" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP | DOTA_UNIT_TARGET_MECHANICAL | DOTA_UNIT_TARGET_OTHER"
+          }
+        }
+
+        "ApplyModifier"
+        {
+          "ModifierName" "creature_slithereen_crush_slow"
+          "Target"
+          {
+            "Center" "CASTER"
+            "Radius" "300"
+            "Teams" "DOTA_UNIT_TARGET_TEAM_ENEMY"
+            "Types" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP | DOTA_UNIT_TARGET_MECHANICAL | DOTA_UNIT_TARGET_OTHER"
+          }
+        }
+      }
+    }
+
+
+  "reincarnate"
+  {
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"       "ability_datadriven"
+    "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+    "AbilityType"         "DOTA_ABILITY_TYPE_ULTIMATE"
+    "SpellImmunityType"       "SPELL_IMMUNITY_ENEMIES_NO"
+    "FightRecapLevel"       "2"
+    "AbilityTextureName"      "skeleton_king_reincarnation"
+    "MaxLevel"              "1"
+    
+    // Time   
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"       "0"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"       "0"
+
+    // Stats
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityModifierSupportValue" "0.2" // Slow isn't the main function of this ability.
+
+    "AbilitySpecial"
+    {
+      "01"
+      {
+        "var_type"        "FIELD_FLOAT"
+        "reincarnate_time"    "3.0 3.0 3.0"
+      }
+      "02"
+      {
+        "var_type"        "FIELD_INTEGER"
+        "slow_radius"     "900"
+      }
+      "03"
+      {
+        "var_type"        "FIELD_INTEGER"
+        "movespeed"       "-75"
+      }
+      "04"
+      {
+        "var_type"        "FIELD_INTEGER"
+        "attackslow_tooltip"  "-75"
+      }
+      "05"
+      {
+        "var_type"        "FIELD_FLOAT"
+        "slow_duration"     "5.0"
+      }
+    }
+
+    "precache"
+    {
+      "particle"  "particles/units/heroes/hero_wisp_spirit.pcf"
+      "particle"  "particles/units/heroes/hero_omniknight/omniknight_guardian_angel_wings_buff.vpcf"
+      "particle"  "particles/units/heroes/hero_omniknight/omniknight_guardian_angel_halo_buff.vpcf"
+      "soundfile"         "soundevents/game_sounds_heroes/game_sounds_omniknight.vsndevts"
+    }
+
+       "Modifiers"
+    {
+      "modifier_spawn_spiderlings_datadriven"
+      {
+        "Passive" "1"
+        "IsHidden"  "1"
+
+        "OnDeath"
+        {
+
+          "SpawnUnit"
+          {
+            "UnitName"  "npc_dota_wisp_spirit"
+            "UnitCount" "1"
+            "SpawnRadius" "1"
+            "Duration"  "5"
+            "Target"
+            {
+              "Center"  "UNIT"
+              "Flags"   "DOTA_UNIT_TARGET_FLAG_DEAD"
+            }
+
+            "OnSpawn"
+            {
+
+
+                  "FireSound"
+               {
+                  "EffectName"    "Hero_Omniknight.GuardianAngel.Cast"
+                  "Target"      "CASTER"
+                }
+                "Knockback"
+              {
+                "Target"            "TARGET"
+                "Center"           "CASTER"
+                "Distance"          "0"
+                "Duration"          "10"
+                "Height"          "1000"
+                "IsFixedDistance"  "1"
+                "ShouldStun"        "0"  
+              }
+
+            "FireEffect"
+               {
+               "EffectName" "particles/units/heroes/hero_omniknight/omniknight_guardian_angel_wings_buff.vpcf"
+               "EffectAttachType" "follow_origin"
+               "Target" "TARGET"
+               }
+          
+            }
+
+          }
+        }
+      }
+    }
+  }
+
+  //EXPLODE
+  //-----------------------------------------------------------------------------------------------------------------
+
+"creature_explode"
+{
+     "BaseClass"       "ability_datadriven"
+  "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_AOE"
+  "AbilityUnitDamageType"     "DAMAGE_TYPE_PHYSICAL"
+  "SpellImmunityType"       "SPELL_IMMUNITY_ENEMIES_YES"
+  "AbilityTextureName"      "techies_land_mines"
+  "MaxLevel" "1"
+    // Item Info
+  // General
+  //-------------------------------------------------------------------------------------------------------------
+      "AbilityCastRange"        "0"
+      "AbilityCastPoint"        "0.0"
+      "AbilityCooldown"       "10.0"
+      "AbilityChannelTime"      "0"
+      "AbilityCastAnimation"      "ACT_DOTA_DISABLED"
+  // Casting
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityCastPoint"        "0"
+
+  // Time   
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityCooldown"       "5"
+
+  // Cost
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilityManaCost"       "0"
+  
+  // Special
+  //-------------------------------------------------------------------------------------------------------------
+  "AbilitySpecial"
+  {
+    "01"
+    {
+      "var_type"          "FIELD_FLOAT"
+      "cast_delay"        "0"
+    }
+    "02"
+    {
+      "var_type"          "FIELD_FLOAT"
+      "return_time"       "3"
+    }
+    // Extra variables
+    "03"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "destroy_tree_radius"   "0"
+    }
+    "04"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "vision_radius"       "0"
+    }
+    "05"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "small_radius"        "200"
+    }
+    "06"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "big_radius"        "500"
+    }
+    "07"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "damage"          "1150"
+    }
+    "08"
+    {
+      "var_type"          "FIELD_INTEGER"
+      "partial_damage"      "380"
+    }
+  }
+  
+  // Data driven
+  //-------------------------------------------------------------------------------------------------------------
+
+  "precache"
+  {
+    "soundfile"         "soundevents/game_sounds_heroes/game_sounds_wisp.vsndevts"
+    "particle"          "particles/units/heroes/hero_wisp/wisp_relocate_channel.vpcf"
+    "particle"          "particles/units/heroes/hero_wisp/wisp_relocate_teleport.vpcf"
+    "particle"          "particles/units/heroes/hero_wisp/wisp_relocate_timer.vpcf"
+    "soundfile"   "soundevents/game_sounds_heroes/game_sounds_techies.vsndevts"   
+    "particle"    "particles/units/heroes/hero_techies/techies_suicide_base.vpcf"
+  }
+  "OnSpellStart"
+  {
+    "FireSound"
+    {
+      "EffectName"    "Hero_Wisp.Relocate"
+      "Target"      "CASTER"
+    }
+    
+    "RunScript"
+    {
+      "ScriptFile"    "heroes/hero_wisp/relocate.lua"
+      "Function"      "CastRelocate"
+      "Target"      "CASTER"
+      
+      "tether_ability"        "wisp_tether_datadriven"
+      "tether_modifier"       "modifier_tether_caster_datadriven"
+      "tether_ally_property_name"   "tether_ally"   // We can access the tethered ally through "tether_ability[tether_ally_property_name]"
+      "tether_ally_modifier"      "modifier_tether_ally_datadriven"
+    }
+    
+    "ApplyModifier"
+    {
+      "ModifierName"    "modifier_relocate_channel_datadriven"
+      "Target"      "CASTER"
+    }
+  }
+  
+  "Modifiers"
+  {
+    "modifier_relocate_channel_datadriven"
+    {
+      "Duration"  "%cast_delay"
+      
+      "OnCreated"
+      {
+        "AttachEffect"
+        {
+          "EffectName"    "particles/units/heroes/hero_wisp/wisp_relocate_channel.vpcf"
+          "EffectAttachType"  "attach_hitloc"
+          "Target"      "TARGET"
+          
+          "ControlPointEntities"
+          {
+            "TARGET"  "attach_hitloc"
+          }
+        }
+      
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "CreateMarkerEndpoint"
+          
+          "endpoint_particle"   "particles/units/heroes/hero_wisp/wisp_relocate_marker_endpoint.vpcf"
+          
+          "vision_radius"     "%vision_radius"
+          "vision_duration"   "%cast_delay"
+        }
+      }
+      
+      "OnStateChanged"
+      {
+        "RunScript"
+        {
+          "ScriptFile"    "heroes/hero_wisp/relocate.lua"
+          "Function"      "CheckToInterrupt"
+          
+          "channel_modifier"  "modifier_relocate_channel_datadriven"
+        }
+      }
+      
+      "OnDestroy"
+      {
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "DestroyMarkerEndpoint"
+        }
+        
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "TryToTeleport"
+          
+          "timer_modifier"  "modifier_relocate_timer_datadriven"
+        }
+      }
+    }
+    
+    "modifier_relocate_return_datadriven"
+    {
+      // Visible from otheres as compared with modifier_relocate_timer_datadriven
+    }
+    
+    "modifier_relocate_timer_datadriven"
+    {
+      "IsHidden"  "0"
+      "Duration"  "%return_time"    // Timer should be hidden
+      
+      "OnCreated"
+      {
+        "ApplyModifier"
+        {
+          "ModifierName"  "modifier_relocate_return_datadriven"
+          "Target"    "TARGET"
+        }
+        
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "Teleportation_PreDestroyTree"
+          
+          "tether_ability"        "wisp_tether_datadriven"
+          "tether_modifier"       "modifier_tether_caster_datadriven"
+          "tether_ally_property_name"   "tether_ally"
+          "tether_ally_modifier"      "modifier_tether_ally_datadriven"
+          "tether_duration"       "%return_time + %extra_tether_duration"
+          
+          "teleport_particle"   "particles/units/heroes/hero_wisp/wisp_relocate_teleport.vpcf"
+        }
+        
+        "DestroyTrees"
+        {
+          "Target"    "CASTER"
+          "Radius"    "%destroy_tree_radius"
+        }
+        
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "Teleportation_PostDestroyTree"
+          
+          "return_time"   "%return_time"
+          
+          "marker_particle" "particles/units/heroes/hero_wisp/wisp_relocate_marker.vpcf"
+          "timer_particle"  "particles/units/heroes/hero_wisp/wisp_relocate_timer.vpcf"
+        }
+        
+        "FireSound"
+        {
+          "EffectName"  "Hero_Wisp.ReturnCounter"
+          "Target"    "CASTER"
+        }
+      }
+      
+      "ThinkInterval"   "1.0"
+      "OnIntervalThink"
+      {
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "UpdateTimer"
+        }
+      }
+      
+      "OnDestroy"
+      {
+        "FireSound"
+    {
+      "EffectName"  "Hero_Techies.Suicide"
+      "Target"    "CASTER"
+    }
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "TryReturningTeleportation"
+          
+          "returning_modifier"  "modifier_relocate_returning_teleport_datadriven"
+        }
+        
+        "RunScript"
+        {
+          "ScriptFile"    "heroes/hero_wisp/relocate.lua"
+          "Function"      "StopSound"
+          "Target"      "CASTER"
+          "sound_name"    "Hero_Wisp.ReturnCounter"
+        }
+        
+        "RemoveModifier"
+        {
+          "ModifierName"  "modifier_relocate_return_datadriven"
+          "Target"    "TARGET"
+        }
+
+    "FireEffect"
+    {
+      "EffectName"        "particles/units/heroes/hero_techies/techies_suicide_base.vpcf"
+      "EffectAttachType"  "follow_origin"
+      "Target"            "CASTER"
+    }
+
+    "DestroyTrees"
+    {
+      "Target"    "CASTER"
+      "Radius"    "%big_radius"
+    }
+
+    "ActOnTargets"
+    {
+      "Target"
+      {
+        "Center"    "CASTER"
+        "Radius"  "%small_radius"
+        "Teams"   "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "Types"   "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+        "Flags"     "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+      }
+    
+      "Action"    
+      {
+        "Damage"
+        {
+          "Target"
+          {
+            "Center"  "TARGET"
+            "Flags"     "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+          }
+          "Type"      "DAMAGE_TYPE_PHYSICAL"
+          "Damage"    "%damage - %partial_damage"
+        }
+      }
+    }
+
+    "ActOnTargets"
+    {
+      "Target"
+      {
+        "Center"    "CASTER"
+        "Radius"  "%big_radius"
+        "Teams"   "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "Types"   "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+        "Flags"     "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+      }
+    
+      "Action"    
+      {
+        "Damage"
+        {
+          "Target"
+          {
+            "Center"  "TARGET"
+            "Flags"     "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+          }
+          "Type"      "DAMAGE_TYPE_PHYSICAL"
+          "Damage"    "%partial_damage"
+        }
+      }
+    }
+
+    "DelayedAction"
+    {
+      "Delay"     "0.03"
+      "Action"    
+      {
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_techies/suicide.lua"
+          "Function"    "Suicide"
+        }
+
+
+        
+        "RunScript"
+        {
+          "ScriptFile"    "heroes/hero_wisp/relocate.lua"
+          "Function"      "StopSound"
+          "Target"      "CASTER"
+          "sound_name"    "Hero_Wisp.ReturnCounter"
+        }
+        
+        "RemoveModifier"
+        {
+          "ModifierName"  "modifier_relocate_return_datadriven"
+          "Target"    "TARGET"
+        }
+      }
+    }
+    
+    "modifier_relocate_returning_teleport_datadriven"
+    {
+      "OnCreated"
+      {
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "ReturningTeleportation_PreDestroyTree"
+          "tether_ability"        "wisp_tether_datadriven"
+          "tether_modifier"       "modifier_tether_caster_datadriven"
+          "tether_ally_property_name"   "tether_ally"
+          
+          "teleport_particle"   "particles/units/heroes/hero_wisp/wisp_relocate_teleport.vpcf"
+        }
+        
+        "DestroyTrees"
+        {
+          "Target"    "CASTER"
+          "Radius"    "%destroy_tree_radius"
+        }
+        
+        "RunScript"
+        {
+          "ScriptFile"  "heroes/hero_wisp/relocate.lua"
+          "Function"    "ReturningTeleportation_PostDestroyTree"
+        }
+        
+        "FireSound"
+        {
+          "EffectName"  "Hero_Wisp.Return"
+          "Target"    "CASTER"
+        }
+        
+        "RemoveModifier"
+        {
+          "ModifierName"  "modifier_relocate_returning_teleport_datadriven"
+          "Target"    "CASTER"
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+  //__________________________________________________________________________________________________________________________________
+
+  //-------------------
+  // Dummy stuff
+  //-------------------
+    
+    "dummy_unit"
+    {
+      "AbilityBehavior"     "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+      "BaseClass"           "ability_datadriven"
+      "AbilityTextureName"            "rubick_empty1"
+      "MaxLevel"                      "1"
+      
+      "Modifiers"
+      {
+        "dummy_unit"
+        {
+            "Passive"                        "1"
+            "IsHidden"                        "1"    
+            "States"
+            {
+                "MODIFIER_STATE_UNSELECTABLE" "MODIFIER_STATE_VALUE_ENABLED"
+                "MODIFIER_STATE_INVULNERABLE"    "MODIFIER_STATE_VALUE_ENABLED"
+                "MODIFIER_STATE_NOT_ON_MINIMAP" "MODIFIER_STATE_VALUE_ENABLED"
+                "MODIFIER_STATE_NO_HEALTH_BAR"  "MODIFIER_STATE_VALUE_ENABLED"
+            }
+        }
+      }
+    }
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      
+
+    
+    "barebones_empty3"
+    {
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      //"ID"              "5343"                            // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+      "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+      "MaxLevel"            "0"
+      "BaseClass"           "ability_datadriven"
+      "AbilityTextureName"            "rubick_empty1"
+    }
+    
+    "barebones_empty4"
+    {
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      //"ID"              "5343"                            // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+      "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+      "MaxLevel"            "0"
+      "BaseClass"           "ability_datadriven"
+      "AbilityTextureName"            "rubick_empty1"
+    }
+    
+    "barebones_empty5"
+    {
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      //"ID"              "5343"                            // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+      "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+      "MaxLevel"            "0"
+      "BaseClass"           "ability_datadriven"
+      "AbilityTextureName"            "rubick_empty1"
+    }
+    
+    "barebones_empty6"
+    {
+      // General
+      //-------------------------------------------------------------------------------------------------------------
+      //"ID"              "5343"                            // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+      "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+      "MaxLevel"            "0"
+      "BaseClass"           "ability_datadriven"
+      "AbilityTextureName"            "rubick_empty1"
+    }
+  }
+
